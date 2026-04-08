@@ -1,0 +1,22 @@
+<%= form_with model: @wallet, class: "space-y-8" do |f| %>
+  <%= render "shared/record_errors", record: @wallet %>
+
+  <div class="grid gap-6">
+    <div>
+      <%= f.label :name, "Nome da carteira", class: "form-label" %>
+      <%= f.text_field :name, placeholder: "Ex: Reserva, Operacao principal, Viagens", class: "form-input" %>
+      <p class="form-hint">Use um nome curto para identificar rapidamente essa carteira no dashboard e nos lancamentos.</p>
+    </div>
+
+    <div>
+      <%= f.label :description, "Descricao", class: "form-label" %>
+      <%= f.text_area :description, rows: 6, placeholder: "Descreva o objetivo dessa carteira, regras de uso ou contexto financeiro.", class: "form-textarea" %>
+      <p class="form-hint">Esse campo ajuda a diferenciar carteiras por objetivo, prazo ou perfil de movimentacao.</p>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-3 border-t border-slate-100 pt-6 sm:flex-row">
+    <%= f.submit @wallet.persisted? ? "Salvar alteracoes" : "Criar carteira", class: "btn-primary" %>
+    <%= link_to "Cancelar", @wallet.persisted? ? wallet_path(@wallet) : wallets_path, class: "btn-secondary" %>
+  </div>
+<% end %>

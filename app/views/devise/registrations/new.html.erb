@@ -1,0 +1,46 @@
+<section class="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+  <div class="surface-soft p-8">
+    <p class="eyebrow">Cadastro</p>
+    <h1 class="mt-3 text-4xl font-semibold tracking-tight text-slate-950">Crie sua conta e comece a estruturar sua rotina financeira.</h1>
+    <p class="mt-4 text-base leading-7 text-slate-600">
+      Em poucos passos voce ganha acesso a carteiras, categorias e um painel de acompanhamento com leitura moderna.
+    </p>
+  </div>
+
+  <div class="surface-panel p-8 sm:p-10">
+    <div class="mb-8">
+      <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Criar conta</p>
+      <h2 class="mt-3 text-3xl font-semibold text-slate-950">Comece sua organizacao</h2>
+    </div>
+
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-6" }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+
+      <div>
+        <%= f.label :email, "E-mail", class: "form-label" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-input" %>
+      </div>
+
+      <div>
+        <div class="flex items-center justify-between gap-3">
+          <%= f.label :password, "Senha", class: "form-label mb-0" %>
+          <% if @minimum_password_length %>
+            <span class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400"><%= @minimum_password_length %> caracteres min.</span>
+          <% end %>
+        </div>
+        <%= f.password_field :password, autocomplete: "new-password", class: "form-input mt-2" %>
+      </div>
+
+      <div>
+        <%= f.label :password_confirmation, "Confirmacao da senha", class: "form-label" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-input" %>
+      </div>
+
+      <%= f.submit "Criar minha conta", class: "btn-primary w-full" %>
+    <% end %>
+
+    <div class="mt-6">
+      <%= render "devise/shared/links" %>
+    </div>
+  </div>
+</section>

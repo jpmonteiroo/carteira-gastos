@@ -1,0 +1,8 @@
+<div>
+  <%= f.label :kind, "Tipo de movimento", class: "form-label" %>
+  <%= f.select :kind,
+      Category::KINDS.map { |kind| [category_kind_label(kind), kind] },
+      { selected: selected_kind, prompt: "Todos os tipos" },
+      class: "form-select" %>
+  <p class="form-hint">Escolha se quer ver categorias de receita, despesa ou ambas.</p>
+</div>

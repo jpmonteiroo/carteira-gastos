@@ -1,0 +1,94 @@
+<section class="grid min-h-[calc(100vh-12rem)] gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+  <div class="space-y-8">
+    <div class="space-y-5">
+      <p class="eyebrow">Planejamento com clareza</p>
+      <h1 class="page-title max-w-3xl">
+        Um painel financeiro elegante para organizar carteiras, categorias e lancamentos sem friccao.
+      </h1>
+      <p class="page-copy">
+        Visualize suas receitas, despesas e saldo em um fluxo que parece um cockpit pessoal. Tudo com foco em leitura rapida, consistencia visual e operacao simples no dia a dia.
+      </p>
+    </div>
+
+    <div class="flex flex-wrap gap-3">
+      <%= link_to "Criar conta", new_user_registration_path, class: "btn-primary" %>
+      <%= link_to "Entrar", new_user_session_path, class: "btn-secondary" %>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-3">
+      <div class="surface-soft p-5">
+        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Visao geral</p>
+        <p class="mt-3 text-lg font-semibold text-slate-950">Resumo por periodo</p>
+        <p class="mt-2 text-sm leading-6 text-slate-500">Mes, trimestre, semestre ou ano em poucos cliques.</p>
+      </div>
+      <div class="surface-soft p-5">
+        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Organizacao</p>
+        <p class="mt-3 text-lg font-semibold text-slate-950">Categorias por tipo</p>
+        <p class="mt-2 text-sm leading-6 text-slate-500">Receitas e despesas separadas com leitura imediata.</p>
+      </div>
+      <div class="surface-soft p-5">
+        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Execucao</p>
+        <p class="mt-3 text-lg font-semibold text-slate-950">Lancamentos claros</p>
+        <p class="mt-2 text-sm leading-6 text-slate-500">Cadastro rapido com status, descricao e carteira de origem.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="surface-panel overflow-hidden p-6 sm:p-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.26em] text-slate-400">Preview</p>
+        <h2 class="mt-2 text-2xl font-semibold text-slate-950">Painel financeiro</h2>
+      </div>
+      <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700">
+        Estavel
+      </span>
+    </div>
+
+    <div class="mt-8 grid gap-4 sm:grid-cols-2">
+      <div class="metric-card">
+        <p class="text-sm text-slate-500">Receitas</p>
+        <p class="mt-3 text-3xl font-semibold text-slate-950">R$ 12.400,00</p>
+        <p class="mt-2 text-sm text-emerald-600">+14% contra o periodo anterior</p>
+      </div>
+      <div class="metric-card">
+        <p class="text-sm text-slate-500">Despesas</p>
+        <p class="mt-3 text-3xl font-semibold text-slate-950">R$ 7.980,00</p>
+        <p class="mt-2 text-sm text-amber-600">Maior peso em moradia e transporte</p>
+      </div>
+    </div>
+
+    <div class="mt-4 grid gap-4">
+      <div class="surface-soft p-5">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="text-sm text-slate-500">Saldo consolidado</p>
+            <p class="mt-3 text-4xl font-semibold text-slate-950">R$ 4.420,00</p>
+          </div>
+          <span class="rounded-full bg-slate-950 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-white">
+            128 lanc.
+          </span>
+        </div>
+
+        <div class="mt-6 space-y-4">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-500">Alimentacao</span>
+            <span class="font-semibold text-slate-950">R$ 1.280,00</span>
+          </div>
+          <div class="h-2 rounded-full bg-slate-100">
+            <div class="h-2 w-[54%] rounded-full bg-teal-500"></div>
+          </div>
+
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-500">Lazer</span>
+            <span class="font-semibold text-slate-950">R$ 640,00</span>
+          </div>
+          <div class="h-2 rounded-full bg-slate-100">
+            <div class="h-2 w-[28%] rounded-full bg-amber-400"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>

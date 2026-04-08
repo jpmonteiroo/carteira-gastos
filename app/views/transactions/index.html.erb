@@ -1,0 +1,122 @@
+<% income_total = @transactions.incomes.sum(:amount) %>
+<% expense_total = @transactions.expenses.sum(:amount) %>
+<% balance = income_total - expense_total %>
+
+<div class="space-y-8">
+  <section class="surface-panel px-6 py-8 sm:px-8">
+    <div class="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+      <div>
+        <p class="eyebrow">Lancamentos</p>
+        <h1 class="page-title mt-3"><%= @wallet.name %></h1>
+        <p class="page-copy mt-4">
+          Acompanhe o fluxo financeiro desta carteira com status, categorias e valores destacados para leitura imediata.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <%= link_to "Novo lancamento", new_wallet_transaction_path(@wallet), class: "btn-primary" %>
+        <%= link_to "Voltar para carteira", wallet_path(@wallet), class: "btn-secondary" %>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <div class="metric-card">
+      <p class="text-sm text-slate-500">Receitas</p>
+      <p class="mt-3 text-3xl font-semibold text-slate-950"><%= brl(income_total) %></p>
+      <p class="mt-2 text-sm text-emerald-600">Entradas consolidadas na listagem atual.</p>
+    </div>
+    <div class="metric-card">
+      <p class="text-sm text-slate-500">Despesas</p>
+      <p class="mt-3 text-3xl font-semibold text-slate-950"><%= brl(expense_total) %></p>
+      <p class="mt-2 text-sm text-rose-600">Saidas classificadas e prontas para analise.</p>
+    </div>
+    <div class="metric-card">
+      <p class="text-sm text-slate-500">Saldo</p>
+      <p class="mt-3 text-3xl font-semibold text-slate-950"><%= brl(balance) %></p>
+      <p class="mt-2 text-sm <%= balance.negative? ? 'text-rose-600' : 'text-emerald-600' %>">
+        <%= balance.negative? ? "Resultado negativo no conjunto atual" : "Resultado positivo no conjunto atual" %>
+      </p>
+    </div>
+    <div class="metric-card">
+      <p class="text-sm text-slate-500">Quantidade</p>
+      <p class="mt-3 text-3xl font-semibold text-slate-950"><%= @transactions.count %></p>
+      <p class="mt-2 text-sm text-slate-500">Movimentos registrados nesta carteira.</p>
+    </div>
+  </section>
+
+  <%= render "shared/filter_toolbar",
+      modal_id: "transactions-filters-modal",
+      title: "Filtros",
+      button_label: "Filtrar lancamentos",
+      active_filters: @active_filters,
+      clear_path: wallet_transactions_path(@wallet) %>
+
+  <%= render "shared/filter_modal",
+      modal_id: "transactions-filters-modal",
+      title: "Filtrar lancamentos",
+      subtitle: "Refine a listagem por periodo, categoria, descricao e status. A ordenacao pode ser feita clicando no titulo de cada coluna.",
+      form_url: wallet_transactions_path(@wallet),
+      submit_label: "Aplicar filtros",
+      clear_path: wallet_transactions_path(@wallet),
+      hidden_fields: { sort: @selected_sort, direction: @selected_direction },
+      active_filters: @active_filters,
+      fields_partial: "transactions/filter_fields",
+      fields_locals: {
+        selected_period: @selected_period,
+        selected_category_id: @selected_category_id,
+        selected_description: @selected_description,
+        selected_status: @selected_status,
+        available_categories: @available_categories
+      } %>
+
+  <% if @transactions.any? %>
+    <section class="surface-panel overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th><%= transaction_sort_link(wallet: @wallet, column: "category", label: "Categoria", selected_sort: @selected_sort, selected_direction: @selected_direction) %></th>
+              <th><%= transaction_sort_link(wallet: @wallet, column: "description", label: "Descricao", selected_sort: @selected_sort, selected_direction: @selected_direction) %></th>
+              <th><%= transaction_sort_link(wallet: @wallet, column: "date", label: "Data", selected_sort: @selected_sort, selected_direction: @selected_direction) %></th>
+              <th><%= transaction_sort_link(wallet: @wallet, column: "status", label: "Status", selected_sort: @selected_sort, selected_direction: @selected_direction) %></th>
+              <th><%= transaction_sort_link(wallet: @wallet, column: "amount", label: "Valor", selected_sort: @selected_sort, selected_direction: @selected_direction) %></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <% @transactions.each do |transaction| %>
+              <tr class="bg-white/40">
+                <td>
+                  <div class="space-y-2">
+                    <p class="font-semibold text-slate-950"><%= transaction.category.name %></p>
+                    <span class="<%= category_badge_classes(transaction.transaction_type) %>"><%= transaction_type_label(transaction.transaction_type) %></span>
+                  </div>
+                </td>
+                <td>
+                  <p class="max-w-xs leading-6 text-slate-500"><%= transaction.description.presence || "Sem descricao informada." %></p>
+                </td>
+                <td><%= display_date(transaction.date) %></td>
+                <td><span class="<%= status_badge_classes(transaction.status) %>"><%= transaction_status_label(transaction.status) %></span></td>
+                <td class="font-semibold <%= amount_text_classes(transaction.transaction_type) %>"><%= signed_brl(transaction.amount, transaction.transaction_type) %></td>
+                <td class="text-right">
+                  <div class="flex justify-end gap-3">
+                    <%= link_to "Abrir", wallet_transaction_path(@wallet, transaction), class: "text-sm font-semibold text-slate-500 hover:text-slate-950" %>
+                    <%= link_to "Editar", edit_wallet_transaction_path(@wallet, transaction), class: "text-sm font-semibold text-slate-500 hover:text-slate-950" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  <% else %>
+    <%= render "shared/empty_state",
+        title: "Nenhum lancamento cadastrado",
+        message: "Comece registrando receitas ou despesas para transformar esta carteira em uma linha do tempo financeira clara.",
+        action_label: "Criar lancamento",
+        action_path: new_wallet_transaction_path(@wallet),
+        accent: "TR" %>
+  <% end %>
+</div>

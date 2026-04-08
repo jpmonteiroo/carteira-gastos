@@ -1,0 +1,35 @@
+<div>
+  <%= f.label :period, "Periodo", class: "form-label" %>
+  <%= f.select :period,
+      transaction_period_options,
+      { selected: selected_period, prompt: "Todos os periodos" },
+      class: "form-select" %>
+  <p class="form-hint">Mostre apenas os lancamentos do periodo atual que voce quer analisar.</p>
+</div>
+
+<div>
+  <%= f.label :category_id, "Categoria", class: "form-label" %>
+  <%= f.select :category_id,
+      available_categories.map { |category| [category.name, category.id] },
+      { selected: selected_category_id, prompt: "Todas as categorias" },
+      class: "form-select" %>
+  <p class="form-hint">Filtre por uma categoria especifica para reduzir a leitura da carteira.</p>
+</div>
+
+<div>
+  <%= f.label :description, "Descricao", class: "form-label" %>
+  <%= f.text_field :description,
+      value: selected_description,
+      placeholder: "Ex.: aluguel, salario, mercado",
+      class: "form-input" %>
+  <p class="form-hint">Busque por parte da descricao do lancamento.</p>
+</div>
+
+<div>
+  <%= f.label :status, "Status", class: "form-label" %>
+  <%= f.select :status,
+      Transaction::STATUSES.map { |status| [transaction_status_label(status), status] },
+      { selected: selected_status, prompt: "Todos os status" },
+      class: "form-select" %>
+  <p class="form-hint">Mostre apenas lancamentos com o status que voce quer acompanhar.</p>
+</div>

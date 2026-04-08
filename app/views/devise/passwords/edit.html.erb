@@ -1,0 +1,42 @@
+<section class="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+  <div class="surface-soft p-8">
+    <p class="eyebrow">Nova senha</p>
+    <h1 class="mt-3 text-4xl font-semibold tracking-tight text-slate-950">Escolha uma senha forte e retome o controle.</h1>
+    <p class="mt-4 text-base leading-7 text-slate-600">
+      Atualize sua senha para voltar ao ambiente com tranquilidade e manter sua conta protegida.
+    </p>
+  </div>
+
+  <div class="surface-panel p-8 sm:p-10">
+    <div class="mb-8">
+      <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Redefinir senha</p>
+      <h2 class="mt-3 text-3xl font-semibold text-slate-950">Alterar credencial</h2>
+    </div>
+
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: "space-y-6" }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+      <%= f.hidden_field :reset_password_token %>
+
+      <div>
+        <div class="flex items-center justify-between gap-3">
+          <%= f.label :password, "Nova senha", class: "form-label mb-0" %>
+          <% if @minimum_password_length %>
+            <span class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400"><%= @minimum_password_length %> caracteres min.</span>
+          <% end %>
+        </div>
+        <%= f.password_field :password, autofocus: true, autocomplete: "new-password", class: "form-input mt-2" %>
+      </div>
+
+      <div>
+        <%= f.label :password_confirmation, "Confirmacao da nova senha", class: "form-label" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-input" %>
+      </div>
+
+      <%= f.submit "Salvar nova senha", class: "btn-primary w-full" %>
+    <% end %>
+
+    <div class="mt-6">
+      <%= render "devise/shared/links" %>
+    </div>
+  </div>
+</section>

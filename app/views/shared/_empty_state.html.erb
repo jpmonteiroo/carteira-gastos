@@ -1,0 +1,14 @@
+<div class="surface-panel px-8 py-10 text-center">
+  <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-slate-950 text-sm font-semibold uppercase tracking-[0.24em] text-white">
+    <%= local_assigns[:accent].presence || "CG" %>
+  </div>
+
+  <h3 class="mt-5 text-2xl font-semibold text-slate-950"><%= title %></h3>
+  <p class="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-500"><%= message %></p>
+
+  <% if local_assigns[:action_label].present? && local_assigns[:action_path].present? %>
+    <div class="mt-6">
+      <%= link_to action_label, action_path, class: local_assigns[:action_class].presence || "btn-primary" %>
+    </div>
+  <% end %>
+</div>

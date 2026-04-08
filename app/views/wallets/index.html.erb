@@ -1,0 +1,103 @@
+<div class="space-y-8">
+  <section class="surface-panel px-6 py-8 sm:px-8">
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <p class="eyebrow">Carteiras</p>
+        <h1 class="page-title mt-3">Organize sua operacao em blocos claros.</h1>
+        <p class="page-copy mt-4">
+          Crie carteiras para separar objetivos, contextos ou estrategias e acompanhe tudo com uma visao limpa e consistente.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <%= link_to "Nova carteira", new_wallet_path, class: "btn-primary" %>
+        <%= link_to "Dashboard", dashboard_path, class: "btn-secondary" %>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid gap-4 md:grid-cols-3">
+    <div class="metric-card">
+      <p class="text-sm text-slate-500">Carteiras ativas</p>
+      <p class="mt-3 text-3xl font-semibold text-slate-950"><%= @wallets_count %></p>
+      <p class="mt-2 text-sm text-slate-500">Estruturas disponiveis para distribuir seu fluxo financeiro.</p>
+    </div>
+    <div class="metric-card">
+      <p class="text-sm text-slate-500">Lancamentos totais</p>
+      <p class="mt-3 text-3xl font-semibold text-slate-950"><%= current_user.transactions.count %></p>
+      <p class="mt-2 text-sm text-slate-500">Movimentacoes registradas em todas as carteiras.</p>
+    </div>
+    <div class="metric-card">
+      <p class="text-sm text-slate-500">Categorias cadastradas</p>
+      <p class="mt-3 text-3xl font-semibold text-slate-950"><%= current_user.categories.count %></p>
+      <p class="mt-2 text-sm text-slate-500">Base pronta para classificar receitas e despesas.</p>
+    </div>
+  </section>
+
+  <%= render "shared/filter_toolbar",
+      modal_id: "wallets-filters-modal",
+      title: "Filtros",
+      button_label: "Filtrar carteiras",
+      active_filters: @active_filters,
+      clear_path: wallets_path %>
+
+  <%= render "shared/filter_modal",
+      modal_id: "wallets-filters-modal",
+      title: "Filtrar carteiras",
+      subtitle: "Refine a listagem usando o nome da carteira.",
+      form_url: wallets_path,
+      submit_label: "Aplicar filtros",
+      clear_path: wallets_path,
+      active_filters: @active_filters,
+      fields_partial: "wallets/filter_fields",
+      fields_locals: { selected_name: @selected_name } %>
+
+  <% if @wallets.any? %>
+    <section class="grid gap-5 lg:grid-cols-2">
+      <% @wallets.each do |wallet| %>
+        <% transactions_count = wallet.attributes["transactions_count"].to_i %>
+        <% last_transaction_date = wallet.attributes["last_transaction_date"] %>
+
+        <article class="surface-panel p-6">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Carteira</p>
+              <h2 class="mt-3 text-2xl font-semibold text-slate-950"><%= wallet.name %></h2>
+            </div>
+            <span class="rounded-full bg-slate-950 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-white">
+              <%= transactions_count %> lanc.
+            </span>
+          </div>
+
+          <p class="mt-4 text-sm leading-6 text-slate-500">
+            <%= wallet.description.present? ? wallet.description : "Sem descricao cadastrada. Use esse espaco para registrar o objetivo e o contexto da carteira." %>
+          </p>
+
+          <div class="mt-6 grid gap-4 sm:grid-cols-2">
+            <div class="surface-soft p-4">
+              <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Ultima movimentacao</p>
+              <p class="mt-3 text-lg font-semibold text-slate-950"><%= last_transaction_date.present? ? display_date(last_transaction_date.to_date) : "Sem registros" %></p>
+            </div>
+            <div class="surface-soft p-4">
+              <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Proximo passo</p>
+              <p class="mt-3 text-lg font-semibold text-slate-950"><%= transactions_count.zero? ? "Cadastrar primeiro lancamento" : "Acompanhar desempenho" %></p>
+            </div>
+          </div>
+
+          <div class="mt-6 flex flex-wrap gap-3">
+            <%= link_to "Abrir carteira", wallet_path(wallet), class: "btn-primary" %>
+            <%= link_to "Ver lancamentos", wallet_transactions_path(wallet), class: "btn-secondary" %>
+            <%= link_to "Novo lancamento", new_wallet_transaction_path(wallet), class: "btn-secondary" %>
+          </div>
+        </article>
+      <% end %>
+    </section>
+  <% else %>
+    <%= render "shared/empty_state",
+        title: "Nenhuma carteira cadastrada",
+        message: "Crie sua primeira carteira para comecar a separar metas, contas e contextos financeiros em uma estrutura mais clara.",
+        action_label: "Criar carteira",
+        action_path: new_wallet_path,
+        accent: "WK" %>
+  <% end %>
+</div>

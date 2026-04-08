@@ -1,0 +1,33 @@
+<%= form_with model: @category, class: "space-y-8" do |f| %>
+  <%= render "shared/record_errors", record: @category %>
+
+  <div class="grid gap-6 md:grid-cols-2">
+    <div class="md:col-span-2">
+      <%= f.label :name, "Nome da categoria", class: "form-label" %>
+      <%= f.text_field :name, placeholder: "Ex: Salario, Alimentacao, Investimentos", class: "form-input" %>
+      <p class="form-hint">Escolha um nome objetivo para identificar essa categoria em listagens, filtros e resumos.</p>
+    </div>
+
+    <div>
+      <%= f.label :kind, "Tipo", class: "form-label" %>
+      <%= f.select :kind,
+          Category::KINDS.map { |kind| [category_kind_label(kind), kind] },
+          { prompt: "Selecione o tipo" },
+          class: "form-select" %>
+      <p class="form-hint">Cada categoria deve representar apenas receitas ou apenas despesas.</p>
+    </div>
+
+    <div>
+      <%= f.label :color, "Cor", class: "form-label" %>
+      <div class="rounded-[24px] border border-slate-200 bg-white/90 p-3 shadow-sm">
+        <%= f.color_field :color, value: @category.color.presence || "#0f766e", class: "h-12 w-full cursor-pointer rounded-2xl border-0 bg-transparent p-0" %>
+      </div>
+      <p class="form-hint">Use cores para leitura rapida no dia a dia. Tons frios funcionam bem para agrupamentos visuais.</p>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-3 border-t border-slate-100 pt-6 sm:flex-row">
+    <%= f.submit @category.persisted? ? "Salvar alteracoes" : "Criar categoria", class: "btn-primary" %>
+    <%= link_to "Cancelar", categories_path, class: "btn-secondary" %>
+  </div>
+<% end %>

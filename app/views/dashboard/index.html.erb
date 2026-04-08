@@ -1,0 +1,174 @@
+<div class="space-y-8">
+  <section class="surface-panel px-6 py-8 sm:px-8">
+    <div class="grid gap-6 xl:grid-cols-[1.1fr_0.9fr] xl:items-end">
+      <div class="space-y-4">
+        <p class="eyebrow">Dashboard financeiro</p>
+        <div>
+          <h1 class="page-title">Uma leitura clara da sua operacao financeira.</h1>
+          <p class="page-copy mt-4">
+            <%= @wallet.present? ? "Analise os numeros da carteira #{@wallet.name} com foco em saldo, categorias e movimentacoes recentes." : "Crie sua primeira carteira para acompanhar indicadores, categorias e desempenho por periodo." %>
+          </p>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <%= link_to "Nova carteira", new_wallet_path, class: "btn-primary" %>
+          <% if @wallet.present? %>
+            <%= link_to "Novo lancamento", new_wallet_transaction_path(@wallet), class: "btn-secondary" %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="surface-soft p-5">
+        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Filtro ativo</p>
+        <%= form_with url: dashboard_path, method: :get, local: true, class: "mt-4 grid gap-4 md:grid-cols-2" do |f| %>
+          <div class="md:col-span-2">
+            <%= f.label :wallet_id, "Carteira", class: "form-label" %>
+            <%= f.select :wallet_id,
+                options_from_collection_for_select(@wallets, :id, :name, @wallet&.id),
+                { prompt: "Selecione uma carteira" },
+                class: "form-select" %>
+          </div>
+
+          <div>
+            <%= f.label :period, "Periodo", class: "form-label" %>
+            <%= f.select :period,
+                [["Mes", "month"], ["Trimestre", "quarter"], ["Semestre", "semester"], ["Ano", "year"]],
+                { selected: @period },
+                class: "form-select" %>
+          </div>
+
+          <div>
+            <%= f.label :reference_date, "Data de referencia", class: "form-label" %>
+            <%= f.date_field :reference_date, value: @reference_date, class: "form-input" %>
+          </div>
+
+          <div class="md:col-span-2 flex flex-col gap-3 sm:flex-row">
+            <%= f.submit "Atualizar visao", class: "btn-primary w-full sm:flex-1" %>
+            <% if @filters_active %>
+              <%= link_to "Limpar filtro", dashboard_path, class: "btn-secondary w-full justify-center sm:w-auto" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <% if @wallet.blank? %>
+    <%= render "shared/empty_state",
+        title: "Nenhuma carteira cadastrada ainda",
+        message: "Comece criando uma carteira para organizar seus lancamentos e acompanhar sua performance em um painel moderno e centralizado.",
+        action_label: "Criar primeira carteira",
+        action_path: new_wallet_path,
+        accent: "01" %>
+  <% else %>
+    <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div class="metric-card">
+        <p class="text-sm text-slate-500">Receitas</p>
+        <p class="mt-3 text-3xl font-semibold text-slate-950"><%= brl(@income_total) %></p>
+        <p class="mt-2 text-sm text-emerald-600">Entradas consolidadas no periodo</p>
+      </div>
+
+      <div class="metric-card">
+        <p class="text-sm text-slate-500">Despesas</p>
+        <p class="mt-3 text-3xl font-semibold text-slate-950"><%= brl(@expense_total) %></p>
+        <p class="mt-2 text-sm text-rose-600">Saidas classificadas por categoria</p>
+      </div>
+
+      <div class="metric-card">
+        <p class="text-sm text-slate-500">Saldo</p>
+        <p class="mt-3 text-3xl font-semibold text-slate-950"><%= brl(@balance) %></p>
+        <p class="mt-2 text-sm <%= @balance.negative? ? 'text-rose-600' : 'text-emerald-600' %>">
+          <%= @balance.negative? ? "Atencao ao ritmo de gastos" : "Margem positiva no periodo" %>
+        </p>
+      </div>
+
+      <div class="metric-card">
+        <p class="text-sm text-slate-500">Lancamentos</p>
+        <p class="mt-3 text-3xl font-semibold text-slate-950"><%= @transactions.count %></p>
+        <p class="mt-2 text-sm text-slate-500">Movimentacoes encontradas na carteira</p>
+      </div>
+    </section>
+
+    <section class="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+      <div class="surface-panel p-6">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Distribuicao</p>
+            <h2 class="mt-2 text-2xl font-semibold text-slate-950">Totais por categoria</h2>
+          </div>
+          <%= link_to "Gerenciar categorias", categories_path, class: "btn-ghost" %>
+        </div>
+
+        <% if @grouped_by_category.any? %>
+          <div class="mt-6 space-y-4">
+            <% @grouped_by_category.each do |name, total| %>
+              <div class="surface-soft p-4">
+                <div class="flex items-center justify-between gap-4">
+                  <div>
+                    <p class="text-sm font-semibold text-slate-950"><%= name %></p>
+                    <p class="mt-1 text-sm text-slate-500">Participacao no periodo selecionado</p>
+                  </div>
+                  <span class="text-lg font-semibold text-slate-950"><%= brl(total) %></span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="mt-6">
+            <%= render "shared/empty_state",
+                title: "Sem dados por categoria",
+                message: "Cadastre lancamentos nessa carteira para preencher a distribuicao de gastos e receitas.",
+                action_label: "Adicionar lancamento",
+                action_path: new_wallet_transaction_path(@wallet),
+                accent: "CT" %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="surface-panel p-6">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Timeline</p>
+            <h2 class="mt-2 text-2xl font-semibold text-slate-950">Ultimos lancamentos</h2>
+          </div>
+          <%= link_to "Ver tudo", wallet_transactions_path(@wallet), class: "btn-ghost" %>
+        </div>
+
+        <% if @transactions.any? %>
+          <div class="mt-6 space-y-4">
+            <% @transactions.limit(8).each do |transaction| %>
+              <div class="surface-soft p-4">
+                <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <div class="flex flex-wrap items-center gap-2">
+                      <p class="font-semibold text-slate-950"><%= transaction.category.name %></p>
+                      <span class="<%= category_badge_classes(transaction.transaction_type) %>"><%= transaction_type_label(transaction.transaction_type) %></span>
+                      <span class="<%= status_badge_classes(transaction.status) %>"><%= transaction_status_label(transaction.status) %></span>
+                    </div>
+                    <p class="mt-2 text-sm text-slate-500"><%= display_date(transaction.date) %></p>
+                  </div>
+
+                  <div class="text-left md:text-right">
+                    <p class="text-lg font-semibold <%= amount_text_classes(transaction.transaction_type) %>">
+                      <%= signed_brl(transaction.amount, transaction.transaction_type) %>
+                    </p>
+                    <%= link_to "Detalhes", wallet_transaction_path(@wallet, transaction), class: "mt-2 inline-flex text-sm font-semibold text-slate-500 hover:text-slate-950" %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="mt-6">
+            <%= render "shared/empty_state",
+                title: "Nenhum lancamento encontrado",
+                message: "Quando voce registrar receitas e despesas, os movimentos recentes aparecem aqui com leitura imediata.",
+                action_label: "Criar lancamento",
+                action_path: new_wallet_transaction_path(@wallet),
+                accent: "TR" %>
+          </div>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+</div>

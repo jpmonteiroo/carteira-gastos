@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  wallet: one
+  category: one
+  date: 2026-04-07
+  amount: 9.99
+  transaction_type: MyString
+  status: MyString
+  description: MyText
+
+two:
+  user: two
+  wallet: two
+  category: two
+  date: 2026-04-07
+  amount: 9.99
+  transaction_type: MyString
+  status: MyString
+  description: MyText

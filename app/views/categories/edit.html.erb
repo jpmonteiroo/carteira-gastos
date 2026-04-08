@@ -1,0 +1,22 @@
+<section class="grid gap-6 xl:grid-cols-[1fr_0.4fr]">
+  <div class="surface-panel px-6 py-8 sm:px-8">
+    <p class="eyebrow">Editar categoria</p>
+    <h1 class="mt-3 text-4xl font-semibold tracking-tight text-slate-950"><%= @category.name %></h1>
+    <p class="mt-4 max-w-2xl text-base leading-7 text-slate-600">
+      Ajuste rotulo, tipo e cor para manter a classificacao dos seus lancamentos consistente e intuitiva.
+    </p>
+
+    <div class="mt-8">
+      <%= render "form" %>
+    </div>
+  </div>
+
+  <aside class="surface-soft p-6">
+    <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Atencao</p>
+    <div class="mt-5 space-y-4 text-sm leading-6 text-slate-600">
+      <p>Mudar o tipo da categoria pode exigir revisao dos lancamentos que ja usam esse grupo.</p>
+      <p>Se a categoria ja esta em uso, prefira alteracoes pequenas e bem planejadas.</p>
+      <p>Uma nomenclatura consistente melhora muito a leitura do dashboard.</p>
+    </div>
+  </aside>
+</section>

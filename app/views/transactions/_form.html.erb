@@ -1,0 +1,79 @@
+<%= form_with model: [@wallet, @transaction],
+    class: "space-y-8",
+    data: {
+      transaction_form: true,
+      category_label_income: transaction_type_label("income").downcase,
+      category_label_expense: transaction_type_label("expense").downcase
+    } do |f| %>
+  <%= render "shared/record_errors", record: @transaction %>
+
+  <div class="<%= ["rounded-[24px] border border-amber-200 bg-amber-50/90 p-5 text-amber-700 shadow-sm", ("hidden" unless @submit_disabled)].compact.join(" ") %>" data-role="empty-state">
+      <h2 class="text-sm font-semibold uppercase tracking-[0.2em]">Categoria necessaria</h2>
+      <p class="mt-2 text-sm leading-6 text-amber-700">
+        Crie ao menos uma categoria do tipo <span data-role="empty-state-kind"><%= transaction_type_label(@selected_transaction_kind || "expense").downcase %></span> antes de salvar este lancamento.
+      </p>
+      <div class="mt-4">
+        <%= link_to "Criar categoria", new_category_path, class: "btn-secondary" %>
+      </div>
+  </div>
+
+  <div class="grid gap-6 md:grid-cols-2">
+    <div>
+      <%= f.label :date, "Data", class: "form-label" %>
+      <%= f.date_field :date, class: "form-input" %>
+      <p class="form-hint">Defina quando esse movimento impacta a carteira.</p>
+    </div>
+
+    <div>
+      <%= f.label :amount, "Valor", class: "form-label" %>
+      <%= f.number_field :amount, step: 0.01, placeholder: "0,00", class: "form-input" %>
+      <p class="form-hint">Informe o valor bruto do lancamento com duas casas decimais.</p>
+    </div>
+
+    <div>
+      <%= f.label :transaction_type, "Tipo de movimento", class: "form-label" %>
+      <%= f.select :transaction_type,
+          Transaction::TYPES.map { |kind| [transaction_type_label(kind), kind] },
+          {},
+          class: "form-select",
+          data: { role: "transaction-type" } %>
+      <p class="form-hint">A categoria escolhida precisa ter o mesmo tipo deste movimento.</p>
+    </div>
+
+    <div>
+      <%= f.label :status, "Status", class: "form-label" %>
+      <%= f.select :status,
+          Transaction::STATUSES.map { |status| [transaction_status_label(status), status] },
+          {},
+          class: "form-select" %>
+      <p class="form-hint">Use pendente para previsao, pago para realizado e cancelado quando nao houver impacto.</p>
+    </div>
+
+    <div class="md:col-span-2">
+      <%= f.label :category_id, "Categoria", class: "form-label" %>
+      <%= f.collection_select :category_id,
+          @categories,
+          :id,
+          :name,
+          { prompt: "Selecione uma categoria" },
+          class: "form-select",
+          data: {
+            role: "category-select",
+            prompt: "Selecione uma categoria",
+            options: @all_categories_for_form.to_json
+          } %>
+      <p class="form-hint">Se voce mudar o tipo acima, confirme tambem a categoria antes de salvar.</p>
+    </div>
+
+    <div class="md:col-span-2">
+      <%= f.label :description, "Descricao", class: "form-label" %>
+      <%= f.text_area :description, rows: 5, placeholder: "Adicione contexto para facilitar futuras consultas e reconciliacoes.", class: "form-textarea" %>
+      <p class="form-hint">Detalhes curtos ajudam a reconhecer a origem do movimento na listagem e no dashboard.</p>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-3 border-t border-slate-100 pt-6 sm:flex-row">
+    <%= f.submit @transaction.persisted? ? "Salvar alteracoes" : "Criar lancamento", class: "btn-primary", disabled: @submit_disabled, data: { role: "submit-button" } %>
+    <%= link_to "Cancelar", @transaction.persisted? ? wallet_transaction_path(@wallet, @transaction) : wallet_transactions_path(@wallet), class: "btn-secondary" %>
+  </div>
+<% end %>
