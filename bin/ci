@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+echo "== Preparing test database =="
+RAILS_ENV=test bin/rails db:prepare
+
+echo
+echo "== Running RSpec =="
+bundle exec rspec
+
+echo
+echo "== Running Rails tests =="
+bin/rails test
