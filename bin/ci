@@ -6,6 +6,10 @@ echo "== Preparing test database =="
 RAILS_ENV=test bin/rails db:prepare
 
 echo
+echo "== Building Tailwind assets =="
+RAILS_ENV=test bin/rails tailwindcss:build
+
+echo
 echo "== Running RSpec =="
 bundle exec rspec
 
