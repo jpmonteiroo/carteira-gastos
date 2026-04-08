@@ -16,7 +16,7 @@ transport = user.categories.find_or_create_by!(name: "Transporte", kind: "expens
     date: Date.current.beginning_of_month + i.days,
     amount: 5000,
     transaction_type: "income",
-    status: "paid",
+    status: "received",
     description: "Receita #{i + 1}"
   )
 

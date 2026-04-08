@@ -35,6 +35,7 @@ module ApplicationHelper
     {
       "pending" => "Pendente",
       "paid" => "Pago",
+      "received" => "Recebido",
       "canceled" => "Cancelado"
     }[status] || status.to_s.humanize
   end
@@ -66,6 +67,8 @@ module ApplicationHelper
     case status
     when "paid"
       badge_classes(:emerald)
+    when "received"
+      badge_classes(:teal)
     when "pending"
       badge_classes(:amber)
     when "canceled"

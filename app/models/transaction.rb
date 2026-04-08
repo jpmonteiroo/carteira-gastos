@@ -6,7 +6,7 @@ class Transaction < ApplicationRecord
   belongs_to :category
 
   TYPES = %w[income expense].freeze
-  STATUSES = %w[pending paid canceled].freeze
+  STATUSES = %w[pending paid received canceled].freeze
 
   validates :date, presence: true
   validates :amount, presence: true, numericality: { greater_than: 0 }

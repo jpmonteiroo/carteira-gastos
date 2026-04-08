@@ -113,13 +113,13 @@ RSpec.describe "Transactions", type: :request do
 
     it "filters transactions by status" do
       create(:transaction, user: user, wallet: wallet, category: expense_category, status: "pending", description: "Conta aguardando")
-      create(:transaction, user: user, wallet: wallet, category: expense_category, status: "paid", description: "Conta paga")
+      create(:transaction, user: user, wallet: wallet, category: income_category, transaction_type: "income", status: "received", description: "Salario recebido")
 
-      get wallet_transactions_path(wallet), params: { status: "paid" }
+      get wallet_transactions_path(wallet), params: { status: "received" }
 
-      expect(response.body).to include("Conta paga")
+      expect(response.body).to include("Salario recebido")
       expect(response.body).not_to include("Conta aguardando")
-      expect(response.body).to include("Status: Pago")
+      expect(response.body).to include("Status: Recebido")
     end
 
     it "sorts transactions by category" do
@@ -159,10 +159,11 @@ RSpec.describe "Transactions", type: :request do
       create(:transaction, user: user, wallet: wallet, category: expense_category, status: "pending", description: "Pendente")
       create(:transaction, user: user, wallet: wallet, category: expense_category, status: "canceled", description: "Cancelado")
       create(:transaction, user: user, wallet: wallet, category: expense_category, status: "paid", description: "Pago")
+      create(:transaction, user: user, wallet: wallet, category: income_category, transaction_type: "income", status: "received", description: "Recebido")
 
       get wallet_transactions_path(wallet), params: { sort: "status", direction: "asc" }
 
-      expect(column_values(3, "span")).to eq(["Cancelado", "Pago", "Pendente"])
+      expect(column_values(3, "span")).to eq(["Cancelado", "Pago", "Pendente", "Recebido"])
     end
 
     it "sorts transactions by amount" do
@@ -259,7 +260,7 @@ RSpec.describe "Transactions", type: :request do
         transaction: {
           category_id: income_category.id,
           transaction_type: "income",
-          status: "paid",
+          status: "received",
           description: "Recebimento atualizado"
         }
       }
@@ -269,7 +270,7 @@ RSpec.describe "Transactions", type: :request do
       transaction.reload
       expect(transaction.category).to eq(income_category)
       expect(transaction.transaction_type).to eq("income")
-      expect(transaction.status).to eq("paid")
+      expect(transaction.status).to eq("received")
       expect(transaction.description).to eq("Recebimento atualizado")
     end
   end
