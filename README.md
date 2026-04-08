@@ -84,27 +84,6 @@ bundle exec rspec
 
 Para rodar apenas a suite padrao do Rails:
 
-```bash
-bin/rails test
-```
-
-### Credenciais e arquivos locais
-
-- `config/master.key` nao deve ser versionado
-- Logs, cache, arquivos temporarios e artefatos locais ficam fora do Git
-- Caso voce use variaveis de ambiente locais, crie um arquivo `.env` apenas na sua maquina
-
-### Publicacao no GitHub
-
-Antes do primeiro push, revise se nao existe nenhuma credencial local fora do padrao do projeto:
-
-```bash
-git add .
-git commit -m "chore: prepare project for publishing"
-git remote add origin <REPOSITORY_URL>
-git push -u origin main
-```
-
 ## EN
 
 ### Overview
