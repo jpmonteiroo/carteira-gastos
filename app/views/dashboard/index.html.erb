@@ -32,7 +32,7 @@
           <div>
             <%= f.label :period, "Periodo", class: "form-label" %>
             <%= f.select :period,
-                [["Mes", "month"], ["Trimestre", "quarter"], ["Semestre", "semester"], ["Ano", "year"]],
+                time_period_options(@available_periods),
                 { selected: @period },
                 class: "form-select" %>
           </div>

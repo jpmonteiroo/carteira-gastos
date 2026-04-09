@@ -1,0 +1,175 @@
+<div class="space-y-8">
+  <section class="surface-panel px-6 py-8 sm:px-8">
+    <div class="grid gap-6 xl:grid-cols-[1.1fr_0.9fr] xl:items-end">
+      <div class="space-y-4">
+        <p class="eyebrow">Metricas das carteiras</p>
+        <div>
+          <h1 class="page-title">Entenda para onde o dinheiro esta indo em cada periodo.</h1>
+          <p class="page-copy mt-4">
+            <%= @wallet.present? ? "Explore os gastos da carteira #{@wallet.name} com leitura por tempo, categoria, tipo e status para tomar decisoes com mais contexto." : "Crie sua primeira carteira para ativar a tela de metricas e acompanhar a evolucao financeira com filtros rapidos." %>
+          </p>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <%= link_to "Dashboard", dashboard_path(wallet_id: @wallet&.id), class: "btn-secondary" %>
+          <% if @wallet.present? %>
+            <%= link_to "Novo lancamento", new_wallet_transaction_path(@wallet), class: "btn-primary" %>
+          <% else %>
+            <%= link_to "Nova carteira", new_wallet_path, class: "btn-primary" %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="surface-soft p-5">
+        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Filtro ativo</p>
+        <%= form_with url: metrics_path, method: :get, local: true, class: "mt-4 grid gap-4 md:grid-cols-2" do |f| %>
+          <div class="md:col-span-2">
+            <%= f.label :wallet_id, "Carteira", class: "form-label" %>
+            <%= f.select :wallet_id,
+                options_from_collection_for_select(@wallets, :id, :name, @wallet&.id),
+                { prompt: "Selecione uma carteira" },
+                class: "form-select" %>
+          </div>
+
+          <div>
+            <%= f.label :period, "Periodo", class: "form-label" %>
+            <%= f.select :period,
+                time_period_options(@available_periods),
+                { selected: @period },
+                class: "form-select" %>
+          </div>
+
+          <div>
+            <%= f.label :reference_date, "Data de referencia", class: "form-label" %>
+            <%= f.date_field :reference_date, value: @reference_date, class: "form-input" %>
+          </div>
+
+          <div class="md:col-span-2 flex flex-col gap-3 sm:flex-row">
+            <%= f.submit "Atualizar metricas", class: "btn-primary w-full sm:flex-1" %>
+            <% if @filters_active %>
+              <%= link_to "Limpar filtro", metrics_path, class: "btn-secondary w-full justify-center sm:w-auto" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <% if @wallet.blank? %>
+    <%= render "shared/empty_state",
+        title: "Nenhuma carteira cadastrada ainda",
+        message: "Crie uma carteira para acompanhar distribuicao de gastos, comparativos e leitura por periodo em uma tela dedicada de metricas.",
+        action_label: "Criar primeira carteira",
+        action_path: new_wallet_path,
+        accent: "MT" %>
+  <% else %>
+    <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <%= render Metrics::MetricCardComponent.new(
+          title: "Receitas",
+          value: brl(@dashboard.income_total),
+          subtitle: "Entradas encontradas em #{time_period_label(@period).downcase}.",
+          tone: :emerald
+        ) %>
+
+      <%= render Metrics::MetricCardComponent.new(
+          title: "Despesas",
+          value: brl(@dashboard.expense_total),
+          subtitle: "Saidas consolidadas na carteira filtrada.",
+          tone: :rose
+        ) %>
+
+      <%= render Metrics::MetricCardComponent.new(
+          title: "Saldo",
+          value: brl(@dashboard.balance),
+          subtitle: @dashboard.balance.negative? ? "O periodo esta consumindo mais do que entra." : "O periodo segue com margem positiva.",
+          tone: @dashboard.balance.negative? ? :rose : :emerald
+        ) %>
+
+      <%= render Metrics::MetricCardComponent.new(
+          title: "Ticket medio",
+          value: brl(@dashboard.average_expense),
+          subtitle: "Media por despesa registrada no periodo.",
+          tone: :amber
+        ) %>
+    </section>
+
+    <section class="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+      <%= render Metrics::VerticalBarChartComponent.new(
+          title: "Grafico de gastos",
+          subtitle: "Evolucao das despesas #{time_period_label(@period).downcase} com base na data de referencia informada.",
+          items: @dashboard.expense_timeline,
+          empty_message: "Ainda nao existem despesas suficientes nesse intervalo para montar o grafico."
+        ) %>
+
+      <%= render Metrics::HorizontalBarChartComponent.new(
+          title: "Principais gastos por categoria",
+          subtitle: "Categorias que mais pesaram no total de despesas do periodo selecionado.",
+          items: @dashboard.expenses_by_category,
+          empty_message: "Cadastre despesas nessa carteira para destacar as categorias mais relevantes.",
+          action_label: "Gerenciar categorias",
+          action_path: categories_path
+        ) %>
+    </section>
+
+    <section class="grid gap-6 xl:grid-cols-2">
+      <%= render Metrics::HorizontalBarChartComponent.new(
+          title: "Volume financeiro por tipo",
+          subtitle: "Comparativo entre receitas e despesas dentro do mesmo filtro.",
+          items: @dashboard.amounts_by_type,
+          empty_message: "Ainda nao ha movimentacoes suficientes para comparar os tipos de lancamento."
+        ) %>
+
+      <%= render Metrics::HorizontalBarChartComponent.new(
+          title: "Despesas por status",
+          subtitle: "Entenda quanto do gasto ja foi pago, ainda esta pendente ou acabou cancelado.",
+          items: @dashboard.expenses_by_status,
+          empty_message: "Sem despesas no periodo para distribuir por status.",
+          action_label: "Ver lancamentos",
+          action_path: wallet_transactions_path(@wallet)
+        ) %>
+    </section>
+
+    <section class="grid gap-4 md:grid-cols-2">
+      <div class="surface-panel p-6">
+        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Resumo rapido</p>
+        <h2 class="mt-2 text-2xl font-semibold text-slate-950">Sinais importantes do periodo</h2>
+
+        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+          <div class="surface-soft p-4">
+            <p class="text-sm text-slate-500">Maior despesa</p>
+            <p class="mt-2 text-2xl font-semibold text-slate-950"><%= brl(@dashboard.largest_expense) %></p>
+            <p class="mt-2 text-sm text-slate-500">Ponto maximo de saida dentro do filtro atual.</p>
+          </div>
+
+          <div class="surface-soft p-4">
+            <p class="text-sm text-slate-500">Lancamentos analisados</p>
+            <p class="mt-2 text-2xl font-semibold text-slate-950"><%= @dashboard.transaction_count %></p>
+            <p class="mt-2 text-sm text-slate-500">Base usada para os graficos e comparativos.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="surface-panel p-6">
+        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">Leitura do filtro</p>
+        <h2 class="mt-2 text-2xl font-semibold text-slate-950">Contexto aplicado</h2>
+
+        <div class="mt-6 space-y-4">
+          <div class="surface-soft p-4">
+            <p class="text-sm text-slate-500">Carteira</p>
+            <p class="mt-2 text-lg font-semibold text-slate-950"><%= @wallet.name %></p>
+          </div>
+
+          <div class="surface-soft p-4">
+            <p class="text-sm text-slate-500">Periodo</p>
+            <p class="mt-2 text-lg font-semibold text-slate-950"><%= time_period_label(@period) %></p>
+          </div>
+
+          <div class="surface-soft p-4">
+            <p class="text-sm text-slate-500">Intervalo considerado</p>
+            <p class="mt-2 text-lg font-semibold text-slate-950"><%= "#{display_date(@date_range.begin)} ate #{display_date(@date_range.end)}" %></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  <% end %>
+</div>

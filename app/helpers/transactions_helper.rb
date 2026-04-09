@@ -1,20 +1,10 @@
 module TransactionsHelper
-  PERIOD_LABELS = {
-    "week" => "Esta semana",
-    "month" => "Este mes",
-    "quarter" => "Este trimestre",
-    "semester" => "Este semestre",
-    "year" => "Este ano"
-  }.freeze
-
   def transaction_period_label(period)
-    PERIOD_LABELS[period] || period.to_s.humanize
+    time_period_label(period)
   end
 
   def transaction_period_options
-    ::Transactions::IndexQuery::PERIODS.map do |period|
-      [transaction_period_label(period), period]
-    end
+    time_period_options(::Transactions::IndexQuery::PERIODS)
   end
 
   def transaction_sort_link(wallet:, column:, label:, selected_sort:, selected_direction:)

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer">
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
@@ -29,19 +31,21 @@
           </div>
 
           <% if user_signed_in? %>
-            <div class="flex flex-col gap-3 lg:flex-row lg:items-center">
-              <nav class="flex flex-wrap gap-2">
+            <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-4 lg:self-stretch">
+              <nav class="flex flex-wrap gap-2 lg:min-w-0 lg:flex-1">
                 <%= link_to "Dashboard", dashboard_path, class: nav_link_classes(dashboard_path) %>
+                <%= link_to "Metricas", metrics_path, class: nav_link_classes(metrics_path) %>
                 <%= link_to "Carteiras", wallets_path, class: nav_link_classes(wallets_path, match: :prefix) %>
                 <%= link_to "Categorias", categories_path, class: nav_link_classes(categories_path, match: :prefix) %>
                 <%= link_to "Conta", edit_user_registration_path, class: nav_link_classes(edit_user_registration_path) %>
               </nav>
 
-              <div class="flex items-center gap-3 lg:pl-4">
-                <div class="hidden rounded-full border border-white/70 bg-white/70 px-4 py-2 text-sm text-slate-500 sm:block">
+              <div class="flex items-center gap-2 sm:gap-3 lg:flex-nowrap lg:pl-2">
+                <%= render "shared/financial_notifications" %>
+                <div class="hidden shrink-0 rounded-full border border-white/70 bg-white/70 px-4 py-2 text-sm text-slate-500 xl:block">
                   <span class="font-semibold text-slate-900"><%= current_user.email %></span>
                 </div>
-                <%= button_to "Sair", destroy_user_session_path, method: :delete, class: "btn-secondary", form_class: "inline-flex" %>
+                <%= button_to "Sair", destroy_user_session_path, method: :delete, class: "btn-secondary", form_class: "inline-flex shrink-0" %>
               </div>
             </div>
           <% else %>

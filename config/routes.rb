@@ -15,4 +15,5 @@ Rails.application.routes.draw do
 
   resources :categories
   get "dashboard", to: "dashboard#index"
+  get "metrics", to: "metrics#index"
 end

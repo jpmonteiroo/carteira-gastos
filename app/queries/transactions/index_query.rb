@@ -1,6 +1,6 @@
 module Transactions
   class IndexQuery
-    PERIODS = %w[week month quarter semester year].freeze
+    PERIODS = ::Transactions::DateRange::PERIODS
     SORT_COLUMNS = {
       "category" => "LOWER(categories.name)",
       "description" => "LOWER(COALESCE(transactions.description, ''))",

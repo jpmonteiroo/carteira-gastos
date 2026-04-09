@@ -2,6 +2,7 @@
 
 const transactionKinds = ["income", "expense"];
 let modalEventsInitialized = false;
+let dropdownEventsInitialized = false;
 
 function buildCategoryOption(category) {
   const option = document.createElement("option");
@@ -109,6 +110,67 @@ function initializeModalEvents() {
   modalEventsInitialized = true;
 }
 
+function closeDropdown(dropdown) {
+  if (!dropdown) return;
+
+  const menu = dropdown.querySelector("[data-dropdown-menu]");
+  const toggle = dropdown.querySelector("[data-dropdown-toggle]");
+  if (!menu || !toggle) return;
+
+  menu.classList.add("hidden");
+  toggle.setAttribute("aria-expanded", "false");
+}
+
+function openDropdown(dropdown) {
+  if (!dropdown) return;
+
+  const menu = dropdown.querySelector("[data-dropdown-menu]");
+  const toggle = dropdown.querySelector("[data-dropdown-toggle]");
+  if (!menu || !toggle) return;
+
+  menu.classList.remove("hidden");
+  toggle.setAttribute("aria-expanded", "true");
+}
+
+function initializeDropdownEvents() {
+  if (dropdownEventsInitialized) return;
+
+  document.addEventListener("click", (event) => {
+    const toggle = event.target.closest("[data-dropdown-toggle]");
+
+    if (toggle) {
+      const dropdown = toggle.closest("[data-dropdown]");
+      const menu = dropdown?.querySelector("[data-dropdown-menu]");
+      const isOpen = menu && !menu.classList.contains("hidden");
+
+      document.querySelectorAll("[data-dropdown]").forEach((item) => {
+        if (item !== dropdown) closeDropdown(item);
+      });
+
+      if (isOpen) {
+        closeDropdown(dropdown);
+      } else {
+        openDropdown(dropdown);
+      }
+
+      return;
+    }
+
+    if (!event.target.closest("[data-dropdown]")) {
+      document.querySelectorAll("[data-dropdown]").forEach((dropdown) => closeDropdown(dropdown));
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+
+    document.querySelectorAll("[data-dropdown]").forEach((dropdown) => closeDropdown(dropdown));
+  });
+
+  dropdownEventsInitialized = true;
+}
+
 initializeModalEvents();
+initializeDropdownEvents();
 document.addEventListener("turbo:load", initializeTransactionForms);
 document.addEventListener("DOMContentLoaded", initializeTransactionForms);
