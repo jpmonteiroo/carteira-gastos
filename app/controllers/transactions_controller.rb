@@ -4,7 +4,7 @@ class TransactionsController < ApplicationController
   before_action :set_transaction, only: %i[show edit update destroy]
 
   def index
-    @selected_period = params[:period].presence_in(::Transactions::IndexQuery::PERIODS)
+    @selected_period = params[:period].presence_in(::Constants::PERIODS)
     @selected_category_id = selected_category_id
     @selected_description = params[:description].to_s.strip
     @selected_status = params[:status].presence_in(Transaction::STATUSES)

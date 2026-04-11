@@ -5,7 +5,7 @@ module WalletPeriodFilterable
 
   private
 
-  def load_wallet_period_scope(default_period: DEFAULT_PERIOD, allowed_periods: ::Transactions::DateRange::PERIODS)
+  def load_wallet_period_scope(default_period: DEFAULT_PERIOD, allowed_periods: ::Constants::PERIODS)
     @wallets = current_user.wallets.order(:name)
     @wallet = selected_wallet
     @available_periods = allowed_periods

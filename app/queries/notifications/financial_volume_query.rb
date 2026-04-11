@@ -104,7 +104,7 @@ module Notifications
     end
 
     def normalized_period(period)
-      period.to_s.presence_in(::Transactions::DateRange::PERIODS) || DEFAULT_PERIOD
+      period.to_s.presence_in(::Constants::PERIODS) || DEFAULT_PERIOD
     end
 
     def normalized_reference_date(reference_date)

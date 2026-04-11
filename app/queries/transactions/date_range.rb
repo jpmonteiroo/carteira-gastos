@@ -1,13 +1,11 @@
 module Transactions
   class DateRange
-    PERIODS = %w[week month quarter semester year].freeze
-
     def self.resolve(period:, reference_date: Date.current)
       new(period:, reference_date:).call
     end
 
     def initialize(period:, reference_date: Date.current)
-      @period = period.to_s.presence_in(PERIODS) || "month"
+      @period = period.to_s.presence_in(::Constants::PERIODS) || "month"
       @reference_date = reference_date.to_date
     end
 

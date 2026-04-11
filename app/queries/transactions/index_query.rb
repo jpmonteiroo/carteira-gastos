@@ -1,6 +1,5 @@
 module Transactions
   class IndexQuery
-    PERIODS = ::Transactions::DateRange::PERIODS
     SORT_COLUMNS = {
       "category" => "LOWER(categories.name)",
       "description" => "LOWER(COALESCE(transactions.description, ''))",
@@ -8,7 +7,6 @@ module Transactions
       "status" => "LOWER(transactions.status)",
       "amount" => "transactions.amount"
     }.freeze
-    DIRECTIONS = %w[asc desc].freeze
     DEFAULT_SORT = "date"
     DEFAULT_DIRECTION = "desc"
     FILTERS = [
@@ -62,7 +60,7 @@ module Transactions
     end
 
     def normalize_direction(direction)
-      direction.to_s.downcase.presence_in(DIRECTIONS) || DEFAULT_DIRECTION
+      direction.to_s.downcase.presence_in(::Constants::DIRECTIONS) || DEFAULT_DIRECTION
     end
   end
 end

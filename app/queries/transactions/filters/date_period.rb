@@ -10,7 +10,7 @@ module Transactions
       private
 
       def normalized_period
-        filters[:period].to_s.presence_in(::Transactions::IndexQuery::PERIODS)
+        filters[:period].to_s.presence_in(::Constants::PERIODS)
       end
 
       def date_range

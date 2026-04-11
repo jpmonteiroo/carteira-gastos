@@ -4,7 +4,7 @@ module TransactionsHelper
   end
 
   def transaction_period_options
-    time_period_options(::Transactions::IndexQuery::PERIODS)
+    time_period_options(::Constants::PERIODS)
   end
 
   def transaction_sort_link(wallet:, column:, label:, selected_sort:, selected_direction:)
